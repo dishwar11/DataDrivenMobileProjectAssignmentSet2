@@ -1,9 +1,15 @@
 package khanacademy;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
@@ -35,7 +41,15 @@ public class Test_VerifyLogin {
 	}
 
 	@Test(priority = 1)
-	public void loginUsingGoogleAccount() throws InterruptedException {
+	public void loginUsingGoogleAccount() throws InterruptedException, IOException {
+		File file = new File(System.getProperty("user.dir") + "\\src\\test\\resources\\TestDataExcel97.xls");
+		System.out.println(file);
+		FileInputStream inputStream = new FileInputStream(file);
+		Workbook wb = new HSSFWorkbook(inputStream);
+		Sheet sheet = wb.getSheetAt(0);
+		String Username = sheet.getRow(1).getCell(0).getStringCellValue();
+		String password = sheet.getRow(1).getCell(0).getStringCellValue();
+
 		System.out.println("Test execution started for :- Login using google account");
 
 		driver.findElement(MobileBy.AndroidUIAutomator("UiSelector().text(\"Sign in\")")).click();
@@ -51,13 +65,17 @@ public class Test_VerifyLogin {
 		// driver.getContextHandles());
 		System.out.println("current context of the application is " + driver.getContext());
 		Thread.sleep(5000);
-		driver.findElementByClassName("android.widget.EditText").sendKeys("Manzoor");
+		driver.findElementByClassName("android.widget.EditText").sendKeys(Username);
 		driver.findElement(MobileBy.AndroidUIAutomator("UiSelector().text(\"NEXT\")")).click();
 		Thread.sleep(6000);
-		driver.findElementByClassName("android.widget.EditText").sendKeys("Manzoor");
+		driver.findElementByClassName("android.widget.EditText").sendKeys(password);
 		Thread.sleep(5000);
 		driver.findElement(MobileBy.AndroidUIAutomator("UiSelector().text(\"NEXT\")")).click();
 
+		Thread.sleep(5000);
+		driver.findElement(MobileBy.AndroidUIAutomator("UiSelector().text(\"I agree\")")).click();
+
+		System.out.println("click on the I agree button ");
 	}
 
 	@Test(priority = 2)
@@ -74,8 +92,7 @@ public class Test_VerifyLogin {
 
 		} catch (Exception e) {
 			System.out.println("User other credentials for login");
-			//System.out.println("actualResult");
-			// loginUsingGoogleAccount();
+			// System.out.println("actualResult"); // loginUsingGoogleAccount();
 
 		}
 	}
